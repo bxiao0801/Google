@@ -1,0 +1,54 @@
+
+3.
+class Search<K,V>{
+	HashMap<K,V> map1=new HashMap<>();
+	HashMap<V,HashSet<K>> map2=new HashMap<>();
+
+	public Search(){
+		map1=new HashMap<>();
+		map2=new HashMap<>();
+	}
+
+	public void push(K key,V val){
+		//如果不需要移动bucket,直接返回
+		if(map1.containsKey(key)&&map1.get(key).equals(val)){
+			return;
+		}
+
+		//更新map2,移动当前key到新的对应val的bucket里
+		if(!map2.containsKey(val)){
+			map2.put(val,new HashSet<>());
+		}
+		map2.get(val).add(key);
+
+		//更新map2,旧的bucket里删除key
+		if(map1.containsKey(key)){
+			map2.get(map1.get(key)).remove(key);
+		}
+
+		//更新map1
+		map1.put(key,val);
+	}
+
+	public V findByKey(K key){
+		return map1.get(key);
+	}
+
+	public HashSet<K> findByVal(V val){
+		return map2.get(val);
+	}
+
+	public void removeByKey(K key){
+		V v=map1.get(key);
+		map2.get(v).remove(key);
+		map1.remove(key);
+	}
+
+	public void removeByVal(V val){
+		HashSet<K> l=map2.get(val);
+		for(K key:l){
+			map1.remove(key);
+		}
+		map2.remove(val);
+	}
+}
